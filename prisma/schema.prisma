@@ -50,8 +50,19 @@ model Profile {
   id               Int     @id @default(autoincrement())
   userId           Int     @unique
   username         String  @unique
+  topicsCreated    Int[]   @default([])
+  topicsJoined     Int[]   @default([])
   accountActivated Boolean @default(false)
   disabled         Boolean @default(false)
+}
+
+model Topic {
+  id               Int     @id @default(autoincrement())
+  createdAt        String
+  members          Int
+  creatorUserId    Int
+  name             String
+  description      String
 }
 
 model VerificationToken {

@@ -8,13 +8,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const user = await getUserFromSession(req);
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid auth", type: "auth" });
+      return res.status(401).json({ content: "Invalid auth", type: "auth" });
     }
+
+    const userId = user.userId;
 
     if (user.disabled) {
       return res
         .status(401)
-        .json({ message: "Your account has been disabled.", type: "auth" });
+        .json({ content: "Your account has been disabled.", type: "auth" });
     }
 
     const oldUsername = user.username;
@@ -36,68 +38,62 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let data = JSON.parse(req.body);
 
-    if (data.username !== oldUsername) {
+    if (oldUsername !== data.username) {
       if (user.accountActivated) {
         return res.status(400).json({
-          message: "You've already changed your username before.",
+          content: "You've already changed your username before.",
           type: "username",
         });
       }
 
       if (data.username.length < 4 || data.username.length > 16) {
         return res.status(400).json({
-          message: "Please enter a username between 4-16 characters.",
+          content: "Please enter a username between 4-16 characters.",
           type: "username",
         });
       }
 
       if (!usernameRegex.test(data.username)) {
         return res.status(400).json({
-          message:
+          content:
             "Usernames can only contain letters, numbers, dashes, and underscores.",
           type: "username",
         });
       }
 
-      if (data.username.toLowerCase() !== user.username.toLowerCase()) {
-        const userExists = await getUserByUsername(data.username);
+      const userExists = await getUserByUsername(data.username);
 
-        if (
-          notAllowedUsernames.includes(data.username.toLowerCase()) ||
-          userExists
-        ) {
-          return res.status(400).json({
-            message: `Username "${data.username}" is unavailable.`,
-            type: "username",
-          });
-        }
-      }
-    }
-
-    try {
-      if (!user.accountActivated) {
-        if (oldUsername.toLowerCase() !== data.username.toLowerCase()) {
-          await prisma.profile.update({
-            where: { userId: user.userId },
-            data: { accountActivated: true },
-          });
-        }
+      if (
+        notAllowedUsernames.includes(data.username.toLowerCase()) ||
+        userExists
+      ) {
+        return res.status(400).json({
+          content: `Username "${data.username}" is unavailable.`,
+          type: "username",
+        });
       }
 
-      return res.status(200).json({
-        message: "Your settings have been successfully updated!",
-        type: "success",
-      });
-    } catch {
-      return res.status(400).json({
-        message: "Could not save settings for this user.",
-        type: "server",
-      });
+      try {
+        await prisma.profile.update({
+          where: { userId },
+          data: { username: data.username, accountActivated: true },
+        });
+
+        return res.status(200).json({
+          content: "Your settings have been successfully updated!",
+          type: "success",
+        });
+      } catch {
+        return res.status(400).json({
+          content: "Could not save settings for this user.",
+          type: "server",
+        });
+      }
     }
   } else {
     return res
       .status(405)
-      .json({ message: "Sorry, that method isn't allowed.", type: "server" });
+      .json({ content: "Sorry, that method isn't allowed.", type: "server" });
   }
 };
 

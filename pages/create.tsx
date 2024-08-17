@@ -2,33 +2,38 @@ import type { NextPage } from "next";
 import PageHead from "../components/PageHead";
 import Title from "../components/Title";
 import { useSession } from "next-auth/react";
-import Input from "../components/Input";
-import getUserFromSession from "../utils/getUserFromSession";
-import { useState } from "react";
-import Btn from "../components/Btn";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import Error from "../components/Error";
 import Success from "../components/Succeed";
+import Input from "../components/Input";
+import Btn from "../components/Btn";
+import getUserFromSession from "../utils/getUserFromSession";
+import Link from "../components/Link";
 
 interface Props {
   user: ProfileType;
 }
 
 interface FormData {
-  username: string;
+  name: string;
+  description: string;
 }
 
-const Settings: NextPage<Props> = ({ user }) => {
+const Create: NextPage<Props> = ({ user }) => {
   const session = useSession();
   const router = useRouter();
 
-  const [formData, setFormData] = useState<FormData>({ username: "" });
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+  });
   const [message, setMessage] = useState({ content: "", type: "" });
 
   const submitForm = async () => {
     setMessage({ content: "Updating settings...", type: "success" });
 
-    const request = await fetch("/api/users/settings", {
+    const request = await fetch("/api/topics/create", {
       method: "POST",
       body: JSON.stringify(formData),
     });
@@ -44,7 +49,7 @@ const Settings: NextPage<Props> = ({ user }) => {
 
   return (
     <div>
-      <PageHead title="Settings" />
+      <PageHead title="Create" />
 
       {session.status === "loading" && <Title text="Loading..." />}
       {session.status === "unauthenticated" && (
@@ -53,32 +58,48 @@ const Settings: NextPage<Props> = ({ user }) => {
 
       {session.status === "authenticated" && (
         <div>
-          <Title text="Settings" />
+          <Title text="Create" />
 
           {user && (
             <div>
-              <p>Hello, {user.username}.</p>
+              <p>
+                Hello, {user.username}. Create a topic to dicuss with others!
+              </p>
 
-              {!user.accountActivated ? (
+              {user.accountActivated ? (
                 <div>
-                  <p>
-                    You haven&apos;t chosen a username. Make sure you do! You
-                    can only choose once.
-                  </p>
+                  <p>What should the name of your new topic be?</p>
                   <Input
-                    parentData={formData.username}
+                    parentData={formData.name}
                     updateParent={(e: string) =>
-                      setFormData({ ...formData, username: e })
+                      setFormData({ ...formData, name: e })
                     }
-                    label="Username"
-                    name="username"
-                    placeholder="Username"
+                    label="Name"
+                    name="name"
+                    placeholder="Name"
                   />
                   <p className="text-sm text-right mt-1 text-gray-400">
-                    {16 - formData.username.length} characters left
+                    {30 - formData.name.length} characters left
                   </p>
+                  {message.type === "name" && (
+                    <p className="my-2">
+                      <Error text={message.content} />
+                    </p>
+                  )}
 
-                  {message.type === "username" && (
+                  <Input
+                    parentData={formData.description}
+                    updateParent={(e: string) =>
+                      setFormData({ ...formData, description: e })
+                    }
+                    label="Description"
+                    name="description"
+                    placeholder="Description"
+                  />
+                  <p className="text-sm text-right mt-1 text-gray-400">
+                    {60 - formData.description.length} characters left
+                  </p>
+                  {message.type === "description" && (
                     <p className="my-2">
                       <Error text={message.content} />
                     </p>
@@ -103,7 +124,10 @@ const Settings: NextPage<Props> = ({ user }) => {
                   <Btn text="Confirm" submit onClick={submitForm} />
                 </div>
               ) : (
-                <div>You have already chosen a username!</div>
+                <div>
+                  Head over to <a href="/settings">settings</a> and choose a
+                  username to active your account first!
+                </div>
               )}
             </div>
           )}
@@ -113,7 +137,7 @@ const Settings: NextPage<Props> = ({ user }) => {
   );
 };
 
-export default Settings;
+export default Create;
 
 export const getServerSideProps = async (context: any) => {
   const user = await getUserFromSession(context.req);

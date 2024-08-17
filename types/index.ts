@@ -5,3 +5,12 @@ interface ProfileType {
   accountActivated: boolean;
   disabled: boolean;
 }
+
+interface TopicType {
+  id: number;
+  createdAt: string;
+  members: number;
+  creatorUserId: number;
+  name: string;
+  description: string;
+}
