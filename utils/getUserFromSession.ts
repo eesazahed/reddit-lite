@@ -7,11 +7,10 @@ const getUserFromSession = async (req: any) => {
     const token = await getToken({ req });
 
     if (token) {
-      const id = Number(token?.sub);
+      const userId = Number(token?.sub);
       const user = await prisma.profile.findUnique({
-        where: { userId: id },
+        where: { userId },
       });
-
       return user;
     }
 

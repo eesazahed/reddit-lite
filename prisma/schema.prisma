@@ -51,6 +51,7 @@ model Profile {
   userId           Int     @unique
   username         String  @unique
   accountActivated Boolean @default(false)
+  disabled         Boolean @default(false)
 }
 
 model VerificationToken {

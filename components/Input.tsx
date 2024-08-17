@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 
 interface Props {
   parentData: string;
@@ -26,7 +26,7 @@ const Input: NextPage<Props> = ({
         placeholder={placeholder}
         value={parentData}
         onChange={(e) => updateParent(e.target.value)}
-        className="my-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2 dark:border-none dark:caret-white dark:text-white dark:bg-[#1e023a]"
+        className="my-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2 dark:border-none dark:caret-white dark:text-white dark:bg-gray-800"
         required
         max={number ? 12 : 99999999999}
         min={number ? 1 : 0}

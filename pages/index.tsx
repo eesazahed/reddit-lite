@@ -1,15 +1,12 @@
 import type { NextPage } from "next";
 import PageHead from "../components/PageHead";
-import Navbar from "../components/Navbar";
+import Title from "../components/Title";
 
 const Home: NextPage = () => {
   return (
     <div>
       <PageHead title="Home" />
-
-      <Navbar />
-
-      <h1>Home</h1>
+      <Title text="Home" />
     </div>
   );
 };
