@@ -8,8 +8,8 @@ const getUserFromSession = async (req: any) => {
 
     if (token) {
       const id = Number(token?.sub);
-      const user = await prisma.user.findUnique({
-        where: { id },
+      const user = await prisma.profile.findUnique({
+        where: { userId: id },
       });
 
       return user;
