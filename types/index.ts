@@ -4,6 +4,8 @@ interface ProfileType {
   username: string;
   bio: string;
   createdAt: string;
+  topicsCreated: number[];
+  topicsJoined: number[];
   accountActivated: boolean;
   disabled: boolean;
 }

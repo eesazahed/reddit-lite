@@ -38,14 +38,14 @@ const Username: NextPage<Props> = ({
 
       {profileTopicsCreated && (
         <div>
-          <p>Topics created:</p>
+          <p>Topics created ({profileTopicsCreated.length}):</p>
           <TopicsList topicsList={profileTopicsCreated} />{" "}
         </div>
       )}
 
       {profileTopicsJoined && (
         <div>
-          <p>Topics joined:</p>
+          <p>Topics joined ({profileTopicsJoined.length}):</p>
           <TopicsList topicsList={profileTopicsJoined} />{" "}
         </div>
       )}

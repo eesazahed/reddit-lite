@@ -27,51 +27,58 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let data = JSON.parse(req.body);
 
-    if (data.name.length < 4 || data.name.length > 30) {
+    const topicToLeaveId = data.id;
+
+    const topic = await prisma.topic.findUnique({
+      where: { id: topicToLeaveId },
+    });
+
+    if (!topic) {
+      return res
+        .status(400)
+        .json({ content: "Topic does not exist.", type: "server" });
+    }
+
+    if (topic.creatorUserId === userId) {
       return res.status(400).json({
-        content: "Please enter a name between 4-30 characters.",
-        type: "name",
+        content: "You cannot leave or join your own topic.",
+        type: "server",
       });
     }
 
-    if (data.description.length < 4 || data.description.length > 60) {
+    if (!user.topicsJoined.includes(topicToLeaveId)) {
       return res.status(400).json({
-        content: "Please enter a description between 4-60 characters.",
-        type: "description",
+        content: "You aren't part of this topic.",
+        type: "server",
       });
     }
 
     try {
-      const time = String(Date.now());
-
-      const newTopic = await prisma.topic.create({
+      await prisma.topic.update({
+        where: { id: topicToLeaveId },
         data: {
-          createdAt: time,
-          members: 1,
-          creatorUserId: userId,
-          name: data.name,
-          description: data.description,
+          members: { decrement: 1 },
         },
       });
 
-      const newTopicId = newTopic.id;
+      const updatedTopicsJoined = user.topicsJoined.filter(
+        (id) => id !== topicToLeaveId
+      );
 
       await prisma.profile.update({
         where: { userId },
         data: {
-          topicsCreated: { push: newTopicId },
-          topicsJoined: { push: newTopicId },
+          topicsJoined: { set: updatedTopicsJoined },
         },
       });
 
       return res.status(200).json({
-        content: "Your new topic has been successfully created!",
+        content: "You've left.",
         type: "success",
-        newTopicId,
       });
     } catch {
       return res.status(400).json({
-        content: "Could not create topic.",
+        content: "Could not join topic.",
         type: "server",
       });
     }

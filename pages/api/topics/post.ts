@@ -27,51 +27,60 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let data = JSON.parse(req.body);
 
-    if (data.name.length < 4 || data.name.length > 30) {
+    const topicToPostInId = data.topicId;
+
+    const topic = await prisma.topic.findUnique({
+      where: { id: topicToPostInId },
+    });
+
+    if (!topic) {
+      return res
+        .status(400)
+        .json({ content: "Topic does not exist.", type: "server" });
+    }
+
+    if (!user.topicsJoined.includes(topicToPostInId)) {
       return res.status(400).json({
-        content: "Please enter a name between 4-30 characters.",
-        type: "name",
+        content: "Join the topic first before posting.",
+        type: "server",
       });
     }
 
-    if (data.description.length < 4 || data.description.length > 60) {
+    if (data.title.length < 10 || data.title.length > 60) {
       return res.status(400).json({
-        content: "Please enter a description between 4-60 characters.",
-        type: "description",
+        content: "Please write between 10-60 characters.",
+        type: "title",
+      });
+    }
+
+    if (data.content.length < 100 || data.content.length > 1000) {
+      return res.status(400).json({
+        content: "Please write between 100-1000 characters.",
+        type: "content",
       });
     }
 
     try {
       const time = String(Date.now());
 
-      const newTopic = await prisma.topic.create({
+      const newPost = await prisma.post.create({
         data: {
           createdAt: time,
-          members: 1,
+          topicId: topicToPostInId,
           creatorUserId: userId,
-          name: data.name,
-          description: data.description,
-        },
-      });
-
-      const newTopicId = newTopic.id;
-
-      await prisma.profile.update({
-        where: { userId },
-        data: {
-          topicsCreated: { push: newTopicId },
-          topicsJoined: { push: newTopicId },
+          title: data.title,
+          content: data.content,
         },
       });
 
       return res.status(200).json({
-        content: "Your new topic has been successfully created!",
+        content: "Posted!",
         type: "success",
-        newTopicId,
+        newPostId: newPost.id,
       });
     } catch {
       return res.status(400).json({
-        content: "Could not create topic.",
+        content: "Could not join topic.",
         type: "server",
       });
     }

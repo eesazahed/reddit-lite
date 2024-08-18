@@ -75,7 +75,6 @@ const Create: NextPage<Props> = ({ user }) => {
                       setFormData({ ...formData, name: e })
                     }
                     label="Name"
-                    name="name"
                     placeholder="Name"
                   />
                   <p className="text-sm text-right mt-1 text-gray-400">
@@ -93,7 +92,6 @@ const Create: NextPage<Props> = ({ user }) => {
                       setFormData({ ...formData, description: e })
                     }
                     label="Description"
-                    name="description"
                     placeholder="Description"
                   />
                   <p className="text-sm text-right mt-1 text-gray-400">
@@ -125,8 +123,10 @@ const Create: NextPage<Props> = ({ user }) => {
                 </div>
               ) : (
                 <div>
-                  Head over to <a href="/settings">settings</a> and choose a
-                  username to active your account first!
+                  <p>
+                    Head over to <a href="/settings">settings</a> and choose a
+                    username to active your account first!
+                  </p>
                 </div>
               )}
             </div>
