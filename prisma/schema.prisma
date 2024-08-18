@@ -50,6 +50,8 @@ model Profile {
   id               Int     @id @default(autoincrement())
   userId           Int     @unique
   username         String  @unique
+  bio              String  @default("")
+  createdAt        String
   topicsCreated    Int[]   @default([])
   topicsJoined     Int[]   @default([])
   accountActivated Boolean @default(false)

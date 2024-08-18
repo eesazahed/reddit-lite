@@ -11,9 +11,23 @@ const getUserTopicsJoined = async (username: string) => {
 
     const userTopicsJoinedIds = user.topicsJoined;
 
-    console.log(userTopicsJoinedIds);
+    let topicData: TopicType[] = [];
 
-    return null;
+    for (const topicId of userTopicsJoinedIds) {
+      const topicIdData = await prisma.topic.findUnique({
+        where: { id: topicId },
+      });
+
+      if (topicIdData) {
+        topicData.push(topicIdData);
+      }
+    }
+
+    if (topicData.length === 0) {
+      return null;
+    }
+
+    return topicData;
   } catch {
     return null;
   }

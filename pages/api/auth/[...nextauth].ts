@@ -51,10 +51,11 @@ export default NextAuth({
               return testId;
             };
 
-            const randomlyGeneratedUsername = await findAvailableUsername();
+            const username = await findAvailableUsername();
+            const createdAt = String(Date.now());
 
             await prisma.profile.create({
-              data: { userId, username: randomlyGeneratedUsername },
+              data: { userId, username, createdAt },
             });
           }
         }

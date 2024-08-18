@@ -9,6 +9,7 @@ import Btn from "../components/Btn";
 import { useRouter } from "next/router";
 import Error from "../components/Error";
 import Success from "../components/Succeed";
+import Textarea from "../components/Textarea";
 
 interface Props {
   user: ProfileType;
@@ -16,13 +17,17 @@ interface Props {
 
 interface FormData {
   username: string;
+  bio: string;
 }
 
 const Settings: NextPage<Props> = ({ user }) => {
   const session = useSession();
   const router = useRouter();
 
-  const [formData, setFormData] = useState<FormData>({ username: "" });
+  const [formData, setFormData] = useState<FormData>({
+    username: "",
+    bio: user?.bio || "",
+  });
   const [message, setMessage] = useState({ content: "", type: "" });
 
   const submitForm = async () => {
@@ -62,8 +67,8 @@ const Settings: NextPage<Props> = ({ user }) => {
               {!user.accountActivated ? (
                 <div>
                   <p>
-                    You haven&apos;t chosen a username. Make sure you do! You
-                    can only choose once.
+                    You haven&apos;t chosen a username yet. Make sure you do!
+                    You can only choose once.
                   </p>
                   <Input
                     parentData={formData.username}
@@ -71,40 +76,58 @@ const Settings: NextPage<Props> = ({ user }) => {
                       setFormData({ ...formData, username: e })
                     }
                     label="Username"
-                    name="username"
                     placeholder="Username"
                   />
                   <p className="text-sm text-right mt-1 text-gray-400">
                     {16 - formData.username.length} characters left
                   </p>
-
                   {message.type === "username" && (
                     <p className="my-2">
                       <Error text={message.content} />
                     </p>
                   )}
-
-                  <div className="py-8">
-                    {["auth", "server", "success"].includes(message.type) ? (
-                      message.type === "success" ? (
-                        <p className="text-center text-xl">
-                          <Success text={message.content} />
-                        </p>
-                      ) : (
-                        <p className="text-center text-xl">
-                          <Error text={message.content} />
-                        </p>
-                      )
-                    ) : (
-                      ""
-                    )}
-                  </div>
-
-                  <Btn text="Confirm" submit onClick={submitForm} />
                 </div>
               ) : (
                 <div>You have already chosen a username!</div>
               )}
+
+              <div>
+                <p>Write a small bio!</p>
+                <Textarea
+                  parentData={formData.bio}
+                  updateParent={(e: string) =>
+                    setFormData({ ...formData, bio: e })
+                  }
+                  label="Bio"
+                  placeholder="Bio"
+                />
+                <p className="text-sm text-right mt-1 text-gray-400">
+                  {100 - formData.bio.length} characters left
+                </p>
+                {message.type === "bio" && (
+                  <p className="my-2">
+                    <Error text={message.content} />
+                  </p>
+                )}
+              </div>
+
+              <div className="py-8">
+                {["auth", "server", "success"].includes(message.type) ? (
+                  message.type === "success" ? (
+                    <p className="text-center text-xl">
+                      <Success text={message.content} />
+                    </p>
+                  ) : (
+                    <p className="text-center text-xl">
+                      <Error text={message.content} />
+                    </p>
+                  )
+                ) : (
+                  ""
+                )}
+              </div>
+
+              <Btn text="Confirm" submit onClick={submitForm} />
             </div>
           )}
         </div>

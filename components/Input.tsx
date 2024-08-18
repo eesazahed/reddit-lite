@@ -3,35 +3,47 @@ import type { NextPage } from "next";
 interface Props {
   parentData: string;
   updateParent: Function;
-  label: string;
-  name: string;
+  label?: string;
   placeholder: string;
-  number?: boolean;
+  url?: boolean;
+  noMargin?: boolean;
+  doFunction?: Function;
 }
 
 const Input: NextPage<Props> = ({
   label,
-  name,
   placeholder,
   parentData,
   updateParent,
-  number,
+  url,
+  noMargin,
+  doFunction,
 }) => {
+  function keydown(e: any) {
+    if (doFunction) {
+      if (e.key === "Enter") {
+        doFunction();
+      }
+    }
+  }
+
   return (
-    <label className="block text-gray-700 text-sm mb-2 dark:text-white">
-      {label}
+    <div className={noMargin ? "m-0" : "mt-7"}>
+      {label && (
+        <label className="block text-base mb-2" htmlFor="input">
+          {label}
+        </label>
+      )}
       <input
-        type={number ? "number" : "text"}
-        name={name}
+        type={url ? "url" : "text"}
         placeholder={placeholder}
+        id="input"
+        className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
         value={parentData}
         onChange={(e) => updateParent(e.target.value)}
-        className="my-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2 dark:border-none dark:caret-white dark:text-white dark:bg-gray-800"
-        required
-        max={number ? 12 : 99999999999}
-        min={number ? 1 : 0}
+        onKeyDown={(e) => keydown(e)}
       />
-    </label>
+    </div>
   );
 };
 

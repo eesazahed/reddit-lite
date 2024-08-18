@@ -43,7 +43,7 @@ const Create: NextPage<Props> = ({ user }) => {
     setMessage(data);
 
     if (data.type === "success") {
-      router.push("/profile");
+      router.push(`/topic/${data.newTopicId}`);
     }
   };
 

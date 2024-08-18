@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let data = JSON.parse(req.body);
 
-    if (oldUsername !== data.username) {
+    if (data.username && data.username !== oldUsername) {
       if (user.accountActivated) {
         return res.status(400).json({
           content: "You've already changed your username before.",
@@ -73,22 +73,34 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      try {
-        await prisma.profile.update({
-          where: { userId },
-          data: { username: data.username, accountActivated: true },
-        });
+      await prisma.profile.update({
+        where: { userId },
+        data: { username: data.username, accountActivated: true },
+      });
+    }
 
-        return res.status(200).json({
-          content: "Your settings have been successfully updated!",
-          type: "success",
-        });
-      } catch {
-        return res.status(400).json({
-          content: "Could not save settings for this user.",
-          type: "server",
-        });
-      }
+    if (data.bio.length > 100) {
+      return res.status(400).json({
+        content: "Bio must be less than 100 characters.",
+        type: "bio",
+      });
+    }
+
+    try {
+      await prisma.profile.update({
+        where: { userId },
+        data: { bio: data.bio },
+      });
+
+      return res.status(200).json({
+        content: "Your settings have been successfully updated!",
+        type: "success",
+      });
+    } catch {
+      return res.status(400).json({
+        content: "Could not save settings for this user.",
+        type: "server",
+      });
     }
   } else {
     return res

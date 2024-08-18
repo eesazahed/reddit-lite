@@ -55,17 +55,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
+      const newTopicId = newTopic.id;
+
       await prisma.profile.update({
         where: { userId },
         data: {
-          topicsCreated: { push: newTopic.id },
-          topicsJoined: { push: newTopic.id },
+          topicsCreated: { push: newTopicId },
+          topicsJoined: { push: newTopicId },
         },
       });
 
       return res.status(200).json({
         content: "Your new topic has been successfully created!",
         type: "success",
+        newTopicId,
       });
     } catch {
       return res.status(400).json({

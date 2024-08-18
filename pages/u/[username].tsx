@@ -5,6 +5,7 @@ import getUserByUsername from "../../utils/getUserByUsername";
 import getUserTopicsCreated from "../../utils/getUserTopicsCreated";
 import getUserTopicsJoined from "../../utils/getUserTopicsJoined";
 import TopicsList from "../../components/TopicsList";
+import getTimeFormatted from "../../utils/getTimeFormatted";
 
 interface Props {
   profile: ProfileType;
@@ -30,12 +31,18 @@ const Username: NextPage<Props> = ({
     <div>
       <PageHead title={profile.username} />
       <Title text={profile.username} />
+
+      <p>Joined {getTimeFormatted(parseInt(profile.createdAt))}</p>
+
+      {profile.bio.length > 0 && <p>{profile.bio}</p>}
+
       {profileTopicsCreated && (
         <div>
           <p>Topics created:</p>
           <TopicsList topicsList={profileTopicsCreated} />{" "}
         </div>
       )}
+
       {profileTopicsJoined && (
         <div>
           <p>Topics joined:</p>
