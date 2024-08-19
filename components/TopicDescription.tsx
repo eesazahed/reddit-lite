@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
-import getTimeFormatted from "../utils/getTimeFormatted";
 import Link from "./Link";
+import FormattedTime from "./FormattedTime";
 
 interface Props {
   topicData: TopicType;
@@ -14,7 +14,7 @@ const TopicDescription: NextPage<Props> = ({ topicData, createdBy }) => {
       <p>Members: {topicData.members}</p>
       <p>
         Created by <Link text={createdBy} href={`/u/${createdBy}`} />{" "}
-        {getTimeFormatted(parseInt(topicData.createdAt))}
+        <FormattedTime timestamp={topicData.createdAt} />
       </p>
     </div>
   );

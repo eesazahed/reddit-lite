@@ -18,3 +18,13 @@ interface TopicType {
   name: string;
   description: string;
 }
+
+interface PostType {
+  id: number;
+  createdAt: string;
+  topicId: number;
+  creatorUserId: number;
+  title: string;
+  content: string;
+  upvotes: number;
+}

@@ -31,7 +31,7 @@ const Create: NextPage<Props> = ({ user }) => {
   const [message, setMessage] = useState({ content: "", type: "" });
 
   const submitForm = async () => {
-    setMessage({ content: "Updating settings...", type: "success" });
+    setMessage({ content: "Posting...", type: "success" });
 
     const request = await fetch("/api/topics/create", {
       method: "POST",

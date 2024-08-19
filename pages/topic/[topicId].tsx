@@ -6,14 +6,17 @@ import TopicDescription from "../../components/TopicDescription";
 import getUserFromSession from "../../utils/getUserFromSession";
 import getUsernameByUserId from "../../utils/getUsernameByUserId";
 import LeaveOrJoinTopic from "../../components/LeaveOrJoinTopic";
+import getPostsByTopicId from "../../utils/getPostsByTopicId";
+import PostList from "../../components/PostList";
 
 interface Props {
   topicData: TopicType;
   createdBy: string;
   user: ProfileType;
+  postList: PostType[];
 }
 
-const Topic: NextPage<Props> = ({ topicData, createdBy, user }) => {
+const Topic: NextPage<Props> = ({ topicData, createdBy, user, postList }) => {
   if (!topicData) {
     return (
       <div>
@@ -45,6 +48,8 @@ const Topic: NextPage<Props> = ({ topicData, createdBy, user }) => {
           account first!
         </p>
       )}
+
+      <PostList postList={postList} topicId={topicData.id} />
     </div>
   );
 };
@@ -60,12 +65,14 @@ export const getServerSideProps = async (context: any) => {
   }
 
   const createdBy = await getUsernameByUserId(topicData.creatorUserId);
+  const postList = await getPostsByTopicId(topicData.id);
 
   return {
     props: {
       user,
       topicData,
       createdBy,
+      postList,
     },
   };
 };
