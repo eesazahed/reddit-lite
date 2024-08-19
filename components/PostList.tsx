@@ -10,7 +10,12 @@ const PostList: NextPage<Props> = ({ postList, topicId }) => {
   return (
     <div>
       {postList.map((post) => (
-        <PostLink topicId={topicId} postId={post.id} title={post.title} />
+        <PostLink
+          key={post.id}
+          topicId={topicId}
+          postId={post.id}
+          title={post.title}
+        />
       ))}
     </div>
   );

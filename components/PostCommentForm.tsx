@@ -1,19 +1,20 @@
 import type { NextPage } from "next";
 import Btn from "./Btn";
 import { useState } from "react";
-import Input from "./Input";
 import Error from "./Error";
 import Success from "./Succeed";
+import Textarea from "./Textarea";
 
 interface Props {
   postId: number;
+  onNewComment: (comment: CommentType) => void;
 }
 
 interface FormData {
   content: string;
 }
 
-const PostCommentForm: NextPage<Props> = ({ postId }) => {
+const PostCommentForm: NextPage<Props> = ({ postId, onNewComment }) => {
   const [formData, setFormData] = useState<FormData>({
     content: "",
   });
@@ -32,14 +33,16 @@ const PostCommentForm: NextPage<Props> = ({ postId }) => {
     setMessage(data);
 
     if (data.type === "success") {
-      console.log("sucess");
+      onNewComment(data.newComment);
+      setFormData({ content: "" });
+      setTimeout(() => setMessage({ content: "", type: "" }), 2000);
     }
   };
 
   return (
     <>
       <div>
-        <Input
+        <Textarea
           parentData={formData.content}
           updateParent={(e: string) => setFormData({ ...formData, content: e })}
           label="Leave a comment"

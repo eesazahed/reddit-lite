@@ -4,6 +4,8 @@ import { useState } from "react";
 import Input from "./Input";
 import Error from "./Error";
 import Success from "./Succeed";
+import Textarea from "./Textarea";
+import { useRouter } from "next/router";
 
 interface Props {
   topicId: number;
@@ -15,6 +17,8 @@ interface FormData {
 }
 
 const CreatePostForm: NextPage<Props> = ({ topicId }) => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState<FormData>({
     title: "",
     content: "",
@@ -34,7 +38,7 @@ const CreatePostForm: NextPage<Props> = ({ topicId }) => {
     setMessage(data);
 
     if (data.type === "success") {
-      console.log("sucess");
+      router.push(`/topic/${topicId}/post/${data.newPostId}`);
     }
   };
 
@@ -56,7 +60,7 @@ const CreatePostForm: NextPage<Props> = ({ topicId }) => {
           </p>
         )}
 
-        <Input
+        <Textarea
           parentData={formData.content}
           updateParent={(e: string) => setFormData({ ...formData, content: e })}
           label="Content"

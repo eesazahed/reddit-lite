@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    let data = JSON.parse(req.body);
+    const data = JSON.parse(req.body);
 
     const topicToPostInId = data.topicId;
 

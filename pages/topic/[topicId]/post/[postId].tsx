@@ -8,6 +8,9 @@ import getUsernameByUserId from "../../../../utils/getUsernameByUserId";
 import PostCommentForm from "../../../../components/PostCommentForm";
 import getPostComments from "../../../../utils/getPostComments";
 import CommentsList from "../../../../components/CommentsList";
+import PostContent from "../../../../components/PostContent";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 interface Props {
   postData: PostType;
@@ -22,6 +25,9 @@ const Post: NextPage<Props> = ({
   postCreatorUsername,
   postComments,
 }) => {
+  const router = useRouter();
+  const [allComments, setAllComments] = useState<CommentType[]>(postComments);
+
   if (!postData) {
     return (
       <div>
@@ -31,6 +37,23 @@ const Post: NextPage<Props> = ({
     );
   }
 
+  const handleNewComment = (newComment: CommentType) => {
+    setAllComments([...allComments, newComment]);
+  };
+
+  const deleteThisPost = async () => {
+    const request = await fetch("/api/posts/delete", {
+      method: "DELETE",
+      body: JSON.stringify({ postId: postData.id }),
+    });
+
+    const data = await request.json();
+
+    if (data.type === "success") {
+      router.push(`/topic/${postData.topicId}`);
+    }
+  };
+
   return (
     <div>
       <PageHead title={`Post - ${postData.title}`} />
@@ -39,11 +62,20 @@ const Post: NextPage<Props> = ({
         Created <FormattedTime timestamp={postData.createdAt} /> by{" "}
         <a href={`/u/${postCreatorUsername}`}>{postCreatorUsername}</a>
       </p>
-      <p>{postData.content}</p>
+      <PostContent content={postData.content} />
+
+      {user && user.userId === postData.creatorUserId && (
+        <div className="cursor-pointer" onClick={deleteThisPost}>
+          Delete
+        </div>
+      )}
 
       {user && user.accountActivated ? (
         user.topicsJoined.includes(postData.topicId) && (
-          <PostCommentForm postId={postData.id} />
+          <PostCommentForm
+            postId={postData.id}
+            onNewComment={handleNewComment}
+          />
         )
       ) : (
         <p>
@@ -53,10 +85,14 @@ const Post: NextPage<Props> = ({
         </p>
       )}
 
-      {postComments && postComments.length > 0 ? (
+      {allComments && allComments.length > 0 ? (
         <div>
-          <p>View comments ({postComments.length})</p>
-          <CommentsList commentsList={postComments} />
+          <p>View comments ({allComments.length})</p>
+          <CommentsList
+            commentsList={allComments}
+            userId={user.id || undefined}
+            setCommentsList={setAllComments}
+          />
         </div>
       ) : (
         <div>There are no comments on this post yet.</div>
@@ -69,7 +105,7 @@ export default Post;
 
 export const getServerSideProps = async (context: any) => {
   const user = await getUserFromSession(context.req);
-  const postData = await getPostById(Number(context.params.topicId));
+  const postData = await getPostById(Number(context.params.postId));
 
   if (!postData) {
     return { props: {} };

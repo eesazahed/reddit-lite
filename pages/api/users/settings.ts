@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       "reply",
     ];
 
-    let data = JSON.parse(req.body);
+    const data = JSON.parse(req.body);
 
     if (data.username && data.username !== oldUsername) {
       if (user.accountActivated) {

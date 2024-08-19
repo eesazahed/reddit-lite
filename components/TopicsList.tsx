@@ -10,6 +10,7 @@ const TopicsList: NextPage<Props> = ({ topicsList }) => {
     <div>
       {topicsList.map((topic) => (
         <TopicLink
+          key={topic.id}
           id={topic.id}
           name={topic.name}
           description={topic.description}

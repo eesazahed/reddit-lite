@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    let data = JSON.parse(req.body);
+    const data = JSON.parse(req.body);
 
     if (data.name.length < 4 || data.name.length > 30) {
       return res.status(400).json({
