@@ -46,7 +46,7 @@ const PostCommentForm: NextPage<Props> = ({ postId }) => {
           placeholder="comment"
         />
         <p className="text-sm text-right mt-1 text-gray-400">
-          {1000 - formData.content.length} characters left
+          {500 - formData.content.length} characters left
         </p>
         {message.type === "content" && (
           <p className="my-2">

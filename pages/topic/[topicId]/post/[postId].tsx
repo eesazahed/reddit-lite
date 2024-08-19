@@ -6,14 +6,22 @@ import getPostById from "../../../../utils/getPostById";
 import FormattedTime from "../../../../components/FormattedTime";
 import getUsernameByUserId from "../../../../utils/getUsernameByUserId";
 import PostCommentForm from "../../../../components/PostCommentForm";
+import getPostComments from "../../../../utils/getPostComments";
+import CommentsList from "../../../../components/CommentsList";
 
 interface Props {
   postData: PostType;
   user: ProfileType;
   postCreatorUsername: string;
+  postComments: CommentType[];
 }
 
-const Post: NextPage<Props> = ({ postData, user, postCreatorUsername }) => {
+const Post: NextPage<Props> = ({
+  postData,
+  user,
+  postCreatorUsername,
+  postComments,
+}) => {
   if (!postData) {
     return (
       <div>
@@ -44,6 +52,15 @@ const Post: NextPage<Props> = ({ postData, user, postCreatorUsername }) => {
           account first!
         </p>
       )}
+
+      {postComments && postComments.length > 0 ? (
+        <div>
+          <p>View comments ({postComments.length})</p>
+          <CommentsList commentsList={postComments} />
+        </div>
+      ) : (
+        <div>There are no comments on this post yet.</div>
+      )}
     </div>
   );
 };
@@ -59,12 +76,14 @@ export const getServerSideProps = async (context: any) => {
   }
 
   const postCreatorUsername = await getUsernameByUserId(postData.creatorUserId);
+  const postComments = await getPostComments(postData.id);
 
   return {
     props: {
       user,
       postData,
       postCreatorUsername,
+      postComments,
     },
   };
 };

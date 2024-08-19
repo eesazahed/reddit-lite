@@ -73,6 +73,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
+      await prisma.topic.update({
+        where: { id: topicToPostInId },
+        data: { postCount: { increment: 1 } },
+      });
+
       return res.status(200).json({
         content: "Posted!",
         type: "success",

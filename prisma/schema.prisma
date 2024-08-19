@@ -65,6 +65,7 @@ model Topic {
   creatorUserId    Int
   name             String
   description      String
+  postCount        Int    @default(0)
 }
 
 model Post {
@@ -75,8 +76,18 @@ model Post {
   title            String
   content          String
   upvotes          Int     @default(0)
+  commentCount     Int     @default(0)
 }
 
+model Comment {
+  id               Int     @id @default(autoincrement())
+  createdAt        String
+  postId           Int
+  topicId          Int
+  creatorUserId    Int
+  content          String
+  upvotes          Int     @default(0)
+}
 
 model VerificationToken {
   identifier String

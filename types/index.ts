@@ -28,3 +28,13 @@ interface PostType {
   content: string;
   upvotes: number;
 }
+
+interface CommentType {
+  id: number;
+  createdAt: string;
+  postId: number;
+  topicId: number;
+  creatorUserId: number;
+  content: string;
+  upvotes: number;
+}
