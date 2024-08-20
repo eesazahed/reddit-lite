@@ -53,7 +53,10 @@ const Settings: NextPage<Props> = ({ user }) => {
 
       {session.status === "loading" && <Title text="Loading..." />}
       {session.status === "unauthenticated" && (
-        <Title text="Please log in first" />
+        <>
+          <Title text="Please log in first" />
+          <a href="/api/auth/signin">Okay</a>
+        </>
       )}
 
       {session.status === "authenticated" && (

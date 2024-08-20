@@ -8,6 +8,7 @@ import getUsernameByUserId from "../../utils/getUsernameByUserId";
 import LeaveOrJoinTopic from "../../components/LeaveOrJoinTopic";
 import getPostsByTopicId from "../../utils/getPostsByTopicId";
 import PostList from "../../components/PostList";
+import { useRouter } from "next/router";
 
 interface Props {
   topicData: TopicType;
@@ -17,6 +18,8 @@ interface Props {
 }
 
 const Topic: NextPage<Props> = ({ topicData, createdBy, user, postList }) => {
+  const router = useRouter();
+
   if (!topicData) {
     return (
       <div>
@@ -26,12 +29,31 @@ const Topic: NextPage<Props> = ({ topicData, createdBy, user, postList }) => {
     );
   }
 
+  const deleteThisTopic = async () => {
+    const request = await fetch("/api/topics/delete", {
+      method: "DELETE",
+      body: JSON.stringify({ topicId: topicData.id }),
+    });
+
+    const data = await request.json();
+
+    if (data.type === "success") {
+      router.push(`/`);
+    }
+  };
+
   return (
     <div>
       <PageHead title={topicData.name} />
       <Title text={topicData.name} />
 
       <TopicDescription createdBy={createdBy} topicData={topicData} />
+
+      {user && user.userId === topicData.creatorUserId && (
+        <div className="cursor-pointer" onClick={deleteThisTopic}>
+          Delete
+        </div>
+      )}
 
       <LeaveOrJoinTopic user={user} topicId={topicData.id} />
 
